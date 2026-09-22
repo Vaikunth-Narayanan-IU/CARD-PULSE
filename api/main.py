@@ -37,9 +37,12 @@ app.add_middleware(
 
 @app.on_event("startup")
 def startup_event():
-    # Ensure DB is seeded on startup
-    init_db()
-    generate_synthetic_data(25000)
+    # Ensure DB is seeded if writable or available
+    try:
+        init_db()
+        generate_synthetic_data(25000)
+    except Exception as e:
+        print(f"Serverless startup check: {e}")
 
 @app.get("/api/health")
 def health_check():
